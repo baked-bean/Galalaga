@@ -190,7 +190,7 @@ namespace Galalalaga
                 Color.White);
             }
             
-
+#help
             spriteBatch.End();
             base.Draw(gameTime);
         }
