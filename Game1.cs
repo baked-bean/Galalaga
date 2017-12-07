@@ -21,14 +21,15 @@ namespace Galalalaga
         SpriteBatch spriteBatch;
         Texture2D playerSprite;
         playerShip player;
-
+        Random rnd;
         Texture2D[] enemySprite;
         //time allowing
-        
-        
+        List<enemyShip> enemies;
+        List<projectile> shots;
+        /*
         enemyShip[] enemies;
         Vector2[,] enemyGrid;
-        
+        */
         Keys[] pressedKeys;
 
         //game objects/variables
@@ -54,7 +55,12 @@ namespace Galalalaga
             
             player = new playerShip();
             enemySprite = new Texture2D[3];
-            
+            shots = new List<projectile>();
+            enemies = new List<enemyShip>();
+            rnd = new Random();
+            speed = 5;
+            timer = 0;
+            /*
             enemies = new enemyShip[25];
             enemyGrid = new Vector2[5,5];
              
@@ -86,12 +92,9 @@ namespace Galalalaga
                         currentShip += 1;
                     }
                 }
+            */
 
 
-          
-
-            speed = 5;
-            timer = 0;
 
             player.setPlayerPos(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height - 60);
 
@@ -139,7 +142,7 @@ namespace Galalalaga
 
             currentState =  Keyboard.GetState();
             pressedKeys = currentState.GetPressedKeys();
-            enemies[0] = new enemyShip(enemyGrid[2,4],enemySprite[0]);
+            //enemies[0] = new enemyShip(enemyGrid[2,4],enemySprite[0]);
 
          
             if (pressedKeys.Length != 0)
@@ -154,11 +157,32 @@ namespace Galalalaga
                         player.setPlayerPos(player.getPlayerPos().X - speed, player.getPlayerPos().Y);
                         break;
                     case Keys.Space:
-                        
+                        shots.Add(new projectile(player.getPlayerPos(), enemySprite[0]));
                         break;
                 }
                 //Check to make sure the user didn't overstep his damn bounds
             }
+            if (timer % 120 == 0)
+            {
+                enemies.Add(new enemyShip(new Vector2(0,GraphicsDevice.Viewport.Width),enemySprite[0]));
+
+            }
+            if (enemies.Count() != 0 && shots.Count() != 0)
+            {
+                for (int x = 0; x < enemies.Count(); x++)
+                {
+                    for (int y = 0; y < shots.Count(); y++)
+                    {
+                        if (enemies[x].getRect().Intersects(shots[y].getRect()))
+                        {
+                            enemies.Remove(enemies[x]);
+                            shots.Remove(shots[y]);
+                        };
+                    }
+
+                }
+            }
+
             // TODO: Add your update logic here
            
             base.Update(gameTime);
@@ -179,18 +203,24 @@ namespace Galalalaga
 
             spriteBatch.Draw(playerSprite, player.getPlayerRect(), Color.White);
             //loop
-            //draw(enemys[x],pos[])
+            for (int x = 0; x < enemies.Count(); x++)
+            {
+                spriteBatch.Draw(enemies[x].getTexture(),
+                    enemies[x].getRect(),
+                    Color.Transparent);
+
+            }
+            for (int x = 0; x < shots.Count(); x++)
+            {
+                spriteBatch.Draw(shots[x].getTexture(),
+                            shots[x].getRect(),
+                            Color.Transparent);
+            }
             //endloop
             
-            for (int x = 0; x < 25; x++)
-            {
-                spriteBatch.Draw(
-                enemies[x].getTexture(),
-                enemies[x].getRect(),
-                Color.White);
-            }
+          
             
-#help
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
