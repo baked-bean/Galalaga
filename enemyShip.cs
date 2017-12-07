@@ -17,8 +17,8 @@ namespace Galalalaga
     {
            public enemyShip(Vector2 newPos, Texture2D shipTexture)
         {
-            position = new Vector2(100,100);
-           home = newPos;
+            position = newPos;
+
            enemyStance = stance.inactive;
            enemyTexture = shipTexture;
         }
@@ -71,7 +71,7 @@ namespace Galalalaga
 
         public Rectangle getRect()
         {
-            return new Rectangle((int)position.X, (int)position.Y, 25, 25);
+            return new Rectangle((int)position.X, (int)position.Y, 50, 50);
         }
 
         public Texture2D getTexture()
